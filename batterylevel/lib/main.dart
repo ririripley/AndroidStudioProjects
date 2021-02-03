@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 
+
+void main() async {
+
+  runApp(MyApp());
+}
+
+
+/// Flutter调用原生接口 Example
 class _MyHomePageState extends State<MyHomePage> {
 
   //构建通道: 我们使用MethodChannel调用一个方法来返回电池电量。
@@ -42,11 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
 }
 
-
-
-void main() {
-  runApp(MyApp());
-}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
