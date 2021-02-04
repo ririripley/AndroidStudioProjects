@@ -1,10 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:hello/hello.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  test('Calculator function test', () async {
+  test('adds one to input values', () {
     final calculator = Calculator();
     expect(calculator.addOne(2), 3);
     expect(calculator.addOne(-7), -6);

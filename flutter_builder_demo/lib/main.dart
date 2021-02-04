@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_km/stream_builder_demo.dart';
+import 'stream_builder_demo.dart';
 import 'package:flutter_app_km/MyNotification.dart';
 
-void main() {
+void main() async {
+
   runApp(MyBaseApp());
   // print("A");
   // futurePrint(Duration(milliseconds: 1), "B")
@@ -23,7 +24,7 @@ class MyBaseApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home:  NotificationRoute(),
+      home:  StreamBuilderDemo(),
     );
   }
 }
