@@ -169,6 +169,7 @@ class _ProviderRouteState extends State<ProviderRoute> {
               Consumer<CartModel>(
                 builder: (BuildContext context, cart) =>Text("总价: ${cart.totalPrice}"),
               ),
+              /// consumer实现里建立了 对ChangeNotifierProvider 的依赖关系， 只要其中的setState被调用，那么Consumer就会被rebuild
               Builder(builder: (context) {
                 print("RaisedButton build");
                 return RaisedButton(
@@ -177,6 +178,8 @@ class _ProviderRouteState extends State<ProviderRoute> {
                     // listen 设为false，不建立依赖关系
                     ChangeNotifierProvider.of<CartModel>(context, listen: false)
                         .add();
+                    /// 此处add()函数触发ChangeNotifierProvider的setstate函数，
+                    /// 可以理解为ChangeNotifierProvider的data成员（是一个changeNotifier）变动会触发child widget(consumer)的重建
                   },
                 );
               })
