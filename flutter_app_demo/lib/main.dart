@@ -9,13 +9,45 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new FocusTestRoute();
-    // return new MaterialApp(
-    //   home: new MyHomePage(),
-    // );
+    // return new FocusTestRoute();
+    return new MaterialApp(
+      title: "Home Page",
+      home: new WillPopScopeTestRoute(),
+    );
   }
 }
 
+
+class WillPopScopeTestRoute extends StatefulWidget {
+  @override
+  WillPopScopeTestRouteState createState() {
+    return new WillPopScopeTestRouteState();
+  }
+}
+
+class WillPopScopeTestRouteState extends State<WillPopScopeTestRoute> {
+  DateTime _lastPressedAt; //上次点击时间
+
+  @override
+  Widget build(BuildContext context) {
+    return new WillPopScope(
+        onWillPop: () async => showDialog(
+            context: context,
+            builder: (context) =>
+                AlertDialog(title: Text('Are you sure you want to quit?'), actions: <Widget>[
+                  RaisedButton(
+                      child: Text('sign out'),
+                      onPressed: () => Navigator.of(context).pop(true)),
+                  RaisedButton(
+                      child: Text('cancel'),
+                      onPressed: () => Navigator.of(context).pop(false)),
+                ])),
+        child: Container(
+          alignment: Alignment.center,
+          child: Text('Click the back button to ask if you want to exit.'),
+        ));
+  }
+}
 
 
 
