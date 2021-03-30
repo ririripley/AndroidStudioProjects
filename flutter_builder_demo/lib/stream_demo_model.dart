@@ -15,7 +15,7 @@ class StreamDemoModel {
 
   List<String> _listItems;
 
-  Stream<StreamDemoState> get streamState => _stateController.stream;
+  Stream<StreamDemoState> get stream => _stateController.stream;
 
   void dispatch(StreamDemoEvent event){
     print('Event dispatched: $event');
@@ -25,18 +25,18 @@ class StreamDemoModel {
   }
 
   Future _getListData({bool hasError = false, bool hasData = true}) async {
-    _stateController.add(BusyState());
+    _stateController.add(null);
     await Future.delayed(Duration(seconds: 2));
-
-    if (hasError) {
-      return _stateController.addError('error');
-    }
-
-    if (!hasData) {
-      return _stateController.add(DataFetchedState(data: List<String>()));
-    }
+    //
+    // if (hasError) {
+    //   return _stateController.addError('error');
+    // }
+    //
+    // if (hasData) {
+    //   return _stateController.add(DataFetchedState(data: List<String>()));
+    // }
 
     _listItems = List<String>.generate(10, (index) => '$index content');
-    _stateController.add(DataFetchedState(data: _listItems));
+    _stateController.add(null);
   }
 }

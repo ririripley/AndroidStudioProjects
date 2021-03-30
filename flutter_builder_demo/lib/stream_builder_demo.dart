@@ -13,7 +13,7 @@ class _StreamBuilderDemoState extends State<StreamBuilderDemo> {
 
   @override
   void initState() {
-    model.dispatch(FetchData(hasData: true));
+    // model.dispatch(FetchData(hasData: true));
     super.initState();
   }
 
@@ -24,44 +24,37 @@ class _StreamBuilderDemoState extends State<StreamBuilderDemo> {
         title: Text('Stream Builder Demo'),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.yellow,
-        child: Icon(
-          Icons.cached,
-          color: Colors.black87,
-        ),
+        child: Icon(Icons.cached, color: Colors.black87,),
         onPressed: () {
           model.dispatch(FetchData());
         },
       ),
       body: StreamBuilder(
-        stream: model.streamState,
+        stream: model.stream,
         builder: (buildContext, snapshot) {
+          print('${snapshot.data}   + ${snapshot.hasData}');
           if (snapshot.hasError) {
-            return _getInformationMessage(snapshot.error);
+            return Text('${snapshot.error}');
+            // return _getInformationMessage(snapshot.error);
           }
+          return Text(snapshot.hasData ? '${snapshot.data}' : 'NULL');
+          // var streamState = snapshot.data; // stream一端传入的数据
 
-          var streamState = snapshot.data; // stream一端传入的数据
-
-
-          if (!snapshot.hasData || streamState is BusyState) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
-                backgroundColor: Colors.yellow[100],
-              ),
-            );
-          }
-
-          if (streamState is DataFetchedState) {
-            if (!streamState.hasData) {
-              return _getInformationMessage('not found data');
-            }
-          }
-          return ListView.builder(
-            itemCount: streamState.data.length,
-            itemBuilder: (buildContext, index) =>
-                _getListItem(index, streamState.data),
-          );
+          // if (!snapshot.hasData || streamState is BusyState) {
+          //   return Center(
+          //     child: CircularProgressIndicator(),
+          //   );
+          // }
+          // if (streamState is DataFetchedState) {
+          //   if (!streamState.hasData) {
+          //     return _getInformationMessage('not found data');
+          //   }
+          // }
+          // return ListView.builder(
+          //   itemCount: streamState.data.length,
+          //   itemBuilder: (buildContext, index) =>
+          //       _getListItem(index, streamState.data),
+          // );
         },
       ),
     );
