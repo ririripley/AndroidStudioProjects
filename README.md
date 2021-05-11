@@ -29,3 +29,6 @@ Remember, the submodule will not be updated the same as other files stored in th
 The command "git submodule update --remote" will by default update and checkout to the branch specified in .gitsubmodule file. If you git pull without executing this command, the submodule still remains unchanged, when you execute "git submodule status", the commid id still remains unchanged.   
 The command "git submodule update" will just update and checkout to the commit id you specify in the subproject file.
 For those untracked files, you can just selete them without hesitation. For modified change, just save and commit.
+
+
+(3) when you add a submodule to a git repository it tracks a particular commit of that submodule referenced by its sha1.This commit id is stored in Git's object database directly. You can use the command  " git ls-tree master <path-to-directory-containing-submodule> " (or just" git ls-tree master" if the submodule lives in the top-level directory) to see the specified commit id of submodule in supermodule, which matches the id from command "git submodule status ".
