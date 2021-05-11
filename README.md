@@ -25,5 +25,5 @@ In summary, as long as you change the content of submodule in its own directory 
 PS:
 Remember, the submodule will not be updated the same as other files stored in the priject, only commit id, git url as well as the branch will be synchronized. This well explains the following phenomenon:
 (1) Git add modified content in submodule, but there still appears indication "changes not staged for commit:"
-(2) git pull from remote repository, there will appear "modified content(new commit)" ---》 just add/commit/push the change and execute git update --remote to update the submodule. 
+(2) git pull from remote repository, there will appear "modified content(new commit)" ---》 just execute git update --remote to update the submodule and commit and push the change. The command "git submodule update --remote" will by default update and checkout to the branch specified in .gitsubmodule file. If you git pull without executing this command, the submodule still remains unchanged, when you execute "git submodule status", the commid id still remains unchanged.   
 For those untracked files, you can just selete them without hesitation. For modified change, just save and commit.
