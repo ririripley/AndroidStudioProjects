@@ -11,6 +11,34 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_reformat/main.dart';
 
 void main() {
+  testWidgets('NotificationListpage check UI and tap event',
+      (WidgetTester tester) async {
+    var api = await MockAPIService.make(mockOperation: (api) {
+      final Map<String, dynamic> data = json.decode(sourceStringForTitleString);
+      api.setMockCGIData(CGI.notify_list, data);
+    });
+    HttpOverrides.runZoned<Future<void>>(() async {
+      await tester.pumpWidget(
+          MockTencentDocsApp(initialRoute: "/NotificationListPage", api: api));
+      await tester.pumpAndSettle(const Duration(milliseconds: 500));
+      await api.getNotificationService().reloadList();
+      await tester.pumpAndSettle(const Duration(milliseconds: 100));
+      Finder widgetFinder = find.byKey(Key('dropDownTitle'));
+      Finder rtFinder =
+          find.descendant(of: widgetFinder, matching: find.byType(RichText));
+      RichText richText = rtFinder.evaluate().first.widget as RichText;
+      String richTextText = richText.text.toPlainText();
+
+      print('Text from Text widget: $richTextText');
+      expect(richTextText, 'Ripley  申请可编辑权限￼',
+          reason: 'Text from found text widget do not match');
+
+      final isTapped = !richText.text.visitChildren(
+        (visitor) => findTextAndTap(visitor, '可编辑权限'),
+      );
+    }, createHttpClient: createMockImageHttpClient);
+  });
+
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());

@@ -1,0 +1,3 @@
+[submodule "gitTest"]
+	path = gitTest
+	url = https://github.com/ririripley/gitTest.git

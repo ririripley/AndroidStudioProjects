@@ -77,6 +77,7 @@ import Flutter
 private func receiveBatteryLevel(result: FlutterResult) {
   let device = UIDevice.current;
   device.isBatteryMonitoringEnabled = true;
+    
     if (device.batteryState == UIDevice.BatteryState.unknown) {
     result(FlutterError.init(code: "UNAVAILABLE",
                              message: "电池信息不可用",
