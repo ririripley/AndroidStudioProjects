@@ -32,3 +32,8 @@ For those untracked files, you can just selete them without hesitation. For modi
 
 
 (3) when you add a submodule to a git repository it tracks a particular commit of that submodule referenced by its sha1.This commit id is stored in Git's object database directly. You can use the command  " git ls-tree master <path-to-directory-containing-submodule> " (or just" git ls-tree master" if the submodule lives in the top-level directory) to see the specified commit id of submodule in supermodule, which matches the id from command "git submodule status ".
+
+
+
+Here is a marvelous explantion about git submodule:
+https://stackoverflow.com/questions/20655073/how-to-see-which-commit-a-git-submodule-points-at/54238999
