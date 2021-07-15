@@ -5,13 +5,6 @@
 // @dart = 2.8
 
 import 'package:flutter/material.dart';
-
-// import 'colors.dart';
-// import 'icons.dart';
-// import 'list_tile.dart';
-// import 'theme.dart';
-// import 'theme_data.dart';
-
 const Duration _kExpand = Duration(milliseconds: 200);
 
 /// A single-line [ListTile] with a trailing button that expands or collapses
@@ -48,7 +41,6 @@ class CustomizedExpansionTile extends StatefulWidget {
     @required this.title,
     this.subtitle,
     this.backgroundColor,
-    /// to-review
     this.dividerDisplayTime,
     this.dividerColor,
     this.enableBottomDivider,
@@ -59,7 +51,7 @@ class CustomizedExpansionTile extends StatefulWidget {
     this.trailing,
     this.initiallyExpanded = false,
     this.maintainState = false,
-    this.tilePadding,
+    this.tilePadding = EdgeInsets.zero,
     this.expandedCrossAxisAlignment,
     this.expandedAlignment,
     this.childrenPadding,
@@ -174,7 +166,7 @@ class CustomizedExpansionTile extends StatefulWidget {
 class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with SingleTickerProviderStateMixin {
   static final Animatable<double> _easeOutTween = CurveTween(curve: Curves.easeOut);
   static final Animatable<double> _easeInTween = CurveTween(curve: Curves.easeIn);
-  static final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.5);
+  static final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.25);
 
   final ColorTween _borderColorTween = ColorTween();
   final ColorTween _headerColorTween = ColorTween();
@@ -252,14 +244,19 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
             textColor: _headerColor.value,
             child: ListTile(
               onTap: _handleTap,
-              contentPadding: widget.tilePadding,
-              leading: widget.leading,
+              contentPadding: EdgeInsets.zero,
               title: widget.title,
               subtitle: widget.subtitle,
-              // trailing: widget.trailing ?? RotationTransition(
-              //   turns: _iconTurns,
-              //   child: const Icon(Icons.expand_more),
-              // ),
+              leading: (widget.leading != null
+                  ? SizedBox(
+                width: 30,
+                height: 80,
+                child: RotationTransition(
+                    turns: _iconTurns,
+                    child: widget.leading),
+              )
+                  : null),
+              trailing: widget.trailing
             ),
           ),
           ClipRect(
@@ -277,14 +274,10 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
   @override
   void didChangeDependencies() {
     final ThemeData theme = Theme.of(context);
-    // _borderColorTween.end = theme.dividerColor;
-    // _headerColorTween
-    //   ..begin = theme.textTheme.subtitle1.color
-    //   ..end = theme.accentColor;
-    // _iconColorTween
-    //   ..begin = theme.unselectedWidgetColor
-    //   ..end = theme.accentColor;
-    // _backgroundColorTween.end = widget.backgroundColor;
+    _headerColorTween
+      ..begin = theme.textTheme.subtitle1.color
+      ..end = theme.accentColor;
+    setupIconTurns();
 
     setupDidvierColorTween();
 
@@ -293,6 +286,10 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
     setupBackgroundColor();
 
     super.didChangeDependencies();
+  }
+
+  void setupIconTurns() {
+
   }
 
   void setupDidvierColorTween() {

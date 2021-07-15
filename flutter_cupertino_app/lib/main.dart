@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'customized_expansiontile.dart';
 /// Animation
 // void main() {
@@ -168,24 +169,36 @@ class EntryItem extends StatelessWidget {
     if (root.children.isEmpty)
       return new ListTile(title: new Text(root.title));
     return new CustomizedExpansionTile(
+
       dividerColor: Colors.black26,
       dividerDisplayTime: DividerDisplayTime.closed,
       enableTopDivider: false,
       enableBottomDivider: true,
       key: new PageStorageKey<Entry>(root),
-      title: Container(
-        child: Row(
-          children: <Widget>[
-            Container(width: 98,
+      leading: Icon(Icons.keyboard_arrow_right,),
+      title:
+      Container(
+        child:
+        Row(
+        children: <Widget>[
+          Container(width: 80,
             child: new Text(root.title,
               style: TextStyle(fontSize: 16),),),
-            Container(width: 18,),
-            Icon(Icons.arrow_drop_down_rounded,size: 80,),
-            Container(width: 200,),
-          ],
-        ),
+          Expanded(
+            flex: 1,
+            child: Container(),
+          ),
+        ],
+      ),),
+        // ),
+      trailing:
+      SizedBox(
+        width: 80,
+        child:
+        FlatButton(child: Text('button'),
+            padding: EdgeInsets.zero,
+            onPressed: () {print('hello world!');}),
       ),
-
       children: root.children.map(_buildTiles).toList(),
     );
   }
