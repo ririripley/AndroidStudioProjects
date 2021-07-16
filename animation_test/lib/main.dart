@@ -31,6 +31,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
+
 class FlutterAnimationWidget extends StatefulWidget {
   @override
   _FlutterAnimationWidgetState createState() => _FlutterAnimationWidgetState();
@@ -38,17 +40,23 @@ class FlutterAnimationWidget extends StatefulWidget {
 
 class _FlutterAnimationWidgetState extends State<FlutterAnimationWidget> with TickerProviderStateMixin {
   AnimationController _animationController;
-  double _marginTop;
+  Animation<double> _animation;
+  Animation<Color> _colorAnimation;
 
   @override
   void initState() {
     super.initState();
-    _marginTop = 0;
-    _animationController = AnimationController(duration: Duration(milliseconds: 300), lowerBound: 0, upperBound: 50, vsync: this)..addListener(() {
-      setState(() {
-        _marginTop = _animationController.value;
+    _animationController = AnimationController(duration: Duration(milliseconds: 300), vsync: this);
+    _animation = Tween<double>(begin: 0, end: 50).animate(_animationController)
+      ..addListener(() {
+        setState(() {});
       });
-    });
+    _colorAnimation = ColorTween(begin: Colors.orangeAccent, end: Colors.redAccent).animate(_animationController)
+      ..addListener(() {
+        setState(
+                () {print('I am changing, dude !');});
+      });
+
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) print("动画完成");
     });
@@ -66,6 +74,7 @@ class _FlutterAnimationWidgetState extends State<FlutterAnimationWidget> with Ti
 
   @override
   Widget build(BuildContext context) {
+    print("I am building, dude!");
     return Scaffold(
       body: Center(
         child: Column(
@@ -74,8 +83,8 @@ class _FlutterAnimationWidgetState extends State<FlutterAnimationWidget> with Ti
             Container(
               width: 200,
               height: 50,
-              color: Colors.orangeAccent,
-              margin: EdgeInsets.only(top: _marginTop),
+              color: _colorAnimation.value,
+              margin: EdgeInsets.only(top: _animation.value),
             ),
             FlatButton(
               onPressed: startEasyAnimation,
@@ -90,3 +99,64 @@ class _FlutterAnimationWidgetState extends State<FlutterAnimationWidget> with Ti
     );
   }
 }
+
+
+// class FlutterAnimationWidget extends StatefulWidget {
+//   @override
+//   _FlutterAnimationWidgetState createState() => _FlutterAnimationWidgetState();
+// }
+//
+// class _FlutterAnimationWidgetState extends State<FlutterAnimationWidget> with TickerProviderStateMixin {
+//   AnimationController _animationController;
+//   double _marginTop;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _marginTop = 0;
+//     _animationController = AnimationController(duration: Duration(seconds: 3), lowerBound: 0, upperBound: 50, vsync: this)..addListener(() {
+//       setState(() {
+//         _marginTop = _animationController.value;
+//       });
+//     });
+//     _animationController.addStatusListener((status) {
+//       if (status == AnimationStatus.completed) print("动画完成");
+//     });
+//   }
+//
+//   void startEasyAnimation() {
+//     _animationController.forward();
+//   }
+//
+//   @override
+//   void dispose() {
+//     _animationController.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Container(
+//               width: 200,
+//               height: 50,
+//               color: Colors.orangeAccent,
+//               margin: EdgeInsets.only(top: _marginTop),
+//             ),
+//             FlatButton(
+//               onPressed: startEasyAnimation,
+//               child: Text(
+//                 "点击执行最简单动画",
+//                 style: TextStyle(color: Colors.black38),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
