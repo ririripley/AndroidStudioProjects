@@ -169,13 +169,19 @@ class EntryItem extends StatelessWidget {
     if (root.children.isEmpty)
       return new ListTile(title: new Text(root.title));
     return new CustomizedExpansionTile(
-
-      dividerColor: Colors.black26,
-      dividerDisplayTime: DividerDisplayTime.closed,
-      enableTopDivider: false,
+      leadingIconFinalAngle: 0.1,
+      leadingIconInitialAngle: 0.3,
+      titleBarColor: Colors.yellow,
+      iconColor: Colors.orangeAccent,
+      backgroundColor: Colors.yellow,
+      dividerColor: Colors.transparent,
+      dividerDisplayTime: DividerDisplayTime.always,
+      enableTopDivider: true,
       enableBottomDivider: true,
       key: new PageStorageKey<Entry>(root),
-      leading: Icon(Icons.keyboard_arrow_right,),
+      leading: Icon(Icons.keyboard),//Icon(Icons.keyboard_arrow_right,)
+      headerColor: Colors.purple,
+      subtitle: Text('ByRipley'),
       title:
       Container(
         child:
@@ -184,6 +190,10 @@ class EntryItem extends StatelessWidget {
           Container(width: 80,
             child: new Text(root.title,
               style: TextStyle(fontSize: 16),),),
+          Container(width: 80,
+            child: new Text(root.title,
+              style: TextStyle(fontSize: 16),),),
+          Icon(Icons.policy),
           Expanded(
             flex: 1,
             child: Container(),
@@ -195,7 +205,7 @@ class EntryItem extends StatelessWidget {
       SizedBox(
         width: 80,
         child:
-        FlatButton(child: Text('button'),
+        FlatButton(child: Icon(Icons.access_alarm),
             padding: EdgeInsets.zero,
             onPressed: () {print('hello world!');}),
       ),

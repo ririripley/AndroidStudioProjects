@@ -1,61 +1,47 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-// @dart = 2.8
-
 import 'package:flutter/material.dart';
+
 const Duration _kExpand = Duration(milliseconds: 200);
+const double _angleEnd = 0.25;
+const double _angelBegin = 0.0;
 
-/// A single-line [ListTile] with a trailing button that expands or collapses
-/// the tile to reveal or hide the [children].
-///
-/// This widget is typically used with [ListView] to create an
-/// "expand / collapse" list entry. When used with scrolling widgets like
-/// [ListView], a unique [PageStorageKey] must be specified to enable the
-/// [ExpansionTile] to save and restore its expanded state when it is scrolled
-/// in and out of view.
-///
-/// See also:
-///
-///  * [ListTile], useful for creating expansion tile [children] when the
-///    expansion tile represents a sublist.
-///  * The "Expand/collapse" section of
-///    <https://material.io/guidelines/components/lists-controls.html>.
+/// This widget is adapted from ExpansionTile of Flutter. It differs from the original version in the following aspects:
+/// (1) Customized divider color
+/// (2) Customized divider display time
+/// (3) Customized title color when expanded
+/// (4) Customized rotated leading widget
 
-// 分割线显示时机
 enum DividerDisplayTime {
-  always, //总是显示
-  opened, //展开时显示
-  closed, //关闭时显示
-  never //不显示
+  always,
+  expanded,
+  collapsed,
 }
 
 class CustomizedExpansionTile extends StatefulWidget {
-  /// Creates a single-line [ListTile] with a trailing button that expands or collapses
-  /// the tile to reveal or hide the [children]. The [initiallyExpanded] property must
-  /// be non-null.
   const CustomizedExpansionTile({
     Key key,
     this.leading,
     @required this.title,
     this.subtitle,
-    this.backgroundColor,
-    this.dividerDisplayTime,
+    this.trailing,
+    this.backgroundColor = Colors.transparent,
+    this.titleBarColor = Colors.transparent,
+    this.dividerDisplayTime = DividerDisplayTime.expanded,
     this.dividerColor,
-    this.enableBottomDivider,
-    this.enableTopDivider,
+    this.enableBottomDivider = true,
+    this.enableTopDivider = true,
     this.iconColor,
     this.onExpansionChanged,
     this.children = const <Widget>[],
-    this.trailing,
     this.initiallyExpanded = false,
     this.maintainState = false,
     this.tilePadding = EdgeInsets.zero,
     this.expandedCrossAxisAlignment,
     this.expandedAlignment,
     this.childrenPadding,
-  }) : assert(initiallyExpanded != null),
+    this.leadingIconInitialAngle,
+    this.leadingIconFinalAngle,
+    this.headerColor,
+  })  : assert(initiallyExpanded != null),
         assert(maintainState != null),
         assert(
         expandedCrossAxisAlignment != CrossAxisAlignment.baseline,
@@ -64,20 +50,35 @@ class CustomizedExpansionTile extends StatefulWidget {
         ),
         super(key: key);
 
-  /// to-review
+  /// Specifies the color of the divider.
   final Color dividerColor;
+
+  /// Specifies when to display the divider (only works when divider is enabled).
+  /// Set to display when the tile expanded by default.
   final DividerDisplayTime dividerDisplayTime;
+
+  /// The color of leading widget.
   final Color iconColor;
+
+  /// Specifies if the top and bottom divider is enabled (true, by default).
   final bool enableBottomDivider;
   final bool enableTopDivider;
+
+  /// The rotation angle of the leading widget when the tile collapses.
+  final double leadingIconInitialAngle;
+
+  /// The rotation angle of the leading widget when the tile expands.
+  final double leadingIconFinalAngle;
+
+  /// The color of the text in the title when expanded.
+  final Color headerColor;
+
   /// A widget to display before the title.
   ///
   /// Typically a [CircleAvatar] widget.
   final Widget leading;
 
   /// The primary content of the list item.
-  ///
-  /// Typically a [Text] widget.
   final Widget title;
 
   /// Additional content displayed below the title.
@@ -99,6 +100,9 @@ class CustomizedExpansionTile extends StatefulWidget {
 
   /// The color to display behind the sublist when expanded.
   final Color backgroundColor;
+
+  /// The color of title bar.
+  final Color titleBarColor;
 
   /// A widget to display instead of a rotating arrow icon.
   final Widget trailing;
@@ -166,12 +170,11 @@ class CustomizedExpansionTile extends StatefulWidget {
 class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with SingleTickerProviderStateMixin {
   static final Animatable<double> _easeOutTween = CurveTween(curve: Curves.easeOut);
   static final Animatable<double> _easeInTween = CurveTween(curve: Curves.easeIn);
-  static final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.25);
 
   final ColorTween _borderColorTween = ColorTween();
   final ColorTween _headerColorTween = ColorTween();
   final ColorTween _iconColorTween = ColorTween();
-  final ColorTween _backgroundColorTween = ColorTween();
+  final ColorTween _sublistBackgroundColorTween = ColorTween();
 
   AnimationController _controller;
   Animation<double> _iconTurns;
@@ -179,24 +182,26 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
   Animation<Color> _borderColor;
   Animation<Color> _headerColor;
   Animation<Color> _iconColor;
-  Animation<Color> _backgroundColor;
+  Animation<Color> _sublistBackgroundColor;
+  Animatable<double> _rotationTween;
 
   bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
+    _rotationTween = Tween<double>(
+        begin: widget.leadingIconInitialAngle ?? _angelBegin, end: widget.leadingIconFinalAngle ?? _angleEnd);
     _controller = AnimationController(duration: _kExpand, vsync: this);
     _heightFactor = _controller.drive(_easeInTween);
-    _iconTurns = _controller.drive(_halfTween.chain(_easeInTween));
+    _iconTurns = _controller.drive(_rotationTween.chain(_easeInTween));
     _borderColor = _controller.drive(_borderColorTween.chain(_easeOutTween));
     _headerColor = _controller.drive(_headerColorTween.chain(_easeInTween));
     _iconColor = _controller.drive(_iconColorTween.chain(_easeInTween));
-    _backgroundColor = _controller.drive(_backgroundColorTween.chain(_easeOutTween));
+    _sublistBackgroundColor = _controller.drive(_sublistBackgroundColorTween.chain(_easeOutTween));
 
     _isExpanded = PageStorage.of(context)?.readState(context) as bool ?? widget.initiallyExpanded;
-    if (_isExpanded)
-      _controller.value = 1.0;
+    if (_isExpanded) _controller.value = 1.0;
   }
 
   @override
@@ -212,8 +217,7 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
         _controller.forward();
       } else {
         _controller.reverse().then<void>((void value) {
-          if (!mounted)
-            return;
+          if (!mounted) return;
           setState(() {
             // Rebuild without widget.children.
           });
@@ -221,8 +225,7 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
       }
       PageStorage.of(context)?.writeState(context, _isExpanded);
     });
-    if (widget.onExpansionChanged != null)
-      widget.onExpansionChanged(_isExpanded);
+    if (widget.onExpansionChanged != null) widget.onExpansionChanged(_isExpanded);
   }
 
   Widget _buildChildren(BuildContext context, Widget child) {
@@ -230,34 +233,32 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
 
     return Container(
       decoration: BoxDecoration(
-        color: _backgroundColor.value ?? Colors.transparent,
+        color: _sublistBackgroundColor.value,
         border: Border(
-          top: BorderSide(color: (this.widget.enableTopDivider ?? true) ? borderSideColor : Colors.transparent),
-          bottom: BorderSide(color: (this.widget.enableBottomDivider ?? true) ? borderSideColor : Colors.transparent),
+          top: BorderSide(color: widget.enableTopDivider ? borderSideColor : widget.titleBarColor),
+          bottom: BorderSide(color: widget.enableBottomDivider ? borderSideColor : widget.titleBarColor),
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTileTheme.merge(
+            tileColor: widget.titleBarColor,
             iconColor: _iconColor.value,
             textColor: _headerColor.value,
             child: ListTile(
-              onTap: _handleTap,
-              contentPadding: EdgeInsets.zero,
-              title: widget.title,
-              subtitle: widget.subtitle,
-              leading: (widget.leading != null
-                  ? SizedBox(
-                width: 30,
-                height: 80,
-                child: RotationTransition(
-                    turns: _iconTurns,
-                    child: widget.leading),
-              )
-                  : null),
-              trailing: widget.trailing
-            ),
+                onTap: _handleTap,
+                contentPadding: EdgeInsets.zero,
+                title: widget.title,
+                subtitle: widget.subtitle,
+                leading: (widget.leading != null
+                    ? SizedBox(
+                  width: 30,
+                  height: 80,
+                  child: RotationTransition(turns: _iconTurns, child: widget.leading),
+                )
+                    : null),
+                trailing: widget.trailing),
           ),
           ClipRect(
             child: Align(
@@ -273,23 +274,18 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
 
   @override
   void didChangeDependencies() {
-    final ThemeData theme = Theme.of(context);
-    _headerColorTween
-      ..begin = theme.textTheme.subtitle1.color
-      ..end = theme.accentColor;
-    setupIconTurns();
-
+    setupHeaderColorTween();
     setupDidvierColorTween();
-
     setupIconColorTween();
-
     setupBackgroundColor();
-
-    super.didChangeDependencies();
   }
 
-  void setupIconTurns() {
+  void setupHeaderColorTween() {
+    final ThemeData theme = Theme.of(context);
 
+    _headerColorTween
+      ..begin = theme.textTheme.subtitle1.color
+      ..end = widget.headerColor ?? theme.accentColor;
   }
 
   void setupDidvierColorTween() {
@@ -301,15 +297,11 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
     switch (widget.dividerDisplayTime) {
       case DividerDisplayTime.always:
         break;
-      case DividerDisplayTime.opened:
+      case DividerDisplayTime.collapsed:
         endColor = Colors.transparent;
         break;
-      case DividerDisplayTime.closed:
+      case DividerDisplayTime.expanded:
         beginColor = Colors.transparent;
-        break;
-      case DividerDisplayTime.never:
-        beginColor = Colors.transparent;
-        endColor = Colors.transparent;
         break;
       default:
     }
@@ -318,7 +310,7 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
       ..end = endColor;
   }
 
-  void setupIconColorTween(){
+  void setupIconColorTween() {
     final ThemeData theme = Theme.of(context);
 
     Color beginColor = this.widget.iconColor ?? theme.unselectedWidgetColor;
@@ -329,9 +321,9 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
       ..end = endColor;
   }
 
-  void setupBackgroundColor(){
-    _backgroundColorTween
-      ..begin = widget.backgroundColor
+  void setupBackgroundColor() {
+    _sublistBackgroundColorTween
+      ..begin = Colors.transparent
       ..end = widget.backgroundColor;
   }
 
@@ -351,8 +343,7 @@ class _CustomizedExpansionTileState extends State<CustomizedExpansionTile> with 
           ),
           enabled: !closed,
         ),
-        offstage: closed
-    );
+        offstage: closed);
 
     return AnimatedBuilder(
       animation: _controller.view,
