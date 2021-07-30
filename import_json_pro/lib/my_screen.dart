@@ -14,24 +14,23 @@ class MyScreen extends StatefulWidget {
 
 class _MyScreenState extends State<MyScreen> {
   late int counter;
-  late Future<void> loadAsync;
+  // late Future<void> loadAsync;
 
   @override
   void initState() {
     super.initState();
     counter = 0;
-    loadAsync = MyI18n.loadTranslations();
+    // loadAsync = MyI18n.loadTranslations();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    return FutureBuilder(
-        future: loadAsync,
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return I18n(
-              child:   Padding(
+    // return FutureBuilder(
+        // future: loadAsync,
+        // builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        //   if (snapshot.connectionState == ConnectionState.done) {
+            return  Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -43,7 +42,7 @@ class _MyScreenState extends State<MyScreen> {
                       height: 50,
                       alignment: Alignment.center,
                       child: Text(
-                        "You clicked the button %d times:".plural(counter),
+                        "了解会员".i18n,
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 17),
                       ),
@@ -51,7 +50,7 @@ class _MyScreenState extends State<MyScreen> {
                     MaterialButton(
                       color: Colors.blue,
                       child: Text(
-                        "Increment".i18n,
+                        "个人中心".i18n,
                         style: const TextStyle(color: Colors.white, fontSize: 17),
                       ),
                       onPressed: _increment,
@@ -60,7 +59,7 @@ class _MyScreenState extends State<MyScreen> {
                     MaterialButton(
                       color: Colors.blue,
                       child: Text(
-                        "文档权限".i18n,
+                        "文档权限 %d 人".plural(10),
                         style: const TextStyle(color: Colors.white, fontSize: 17),
                       ),
                       onPressed: _onPressed,
@@ -73,16 +72,18 @@ class _MyScreenState extends State<MyScreen> {
                     const Spacer(flex: 2),
                   ],
                 ),
-              ),
-            );
-          }
-          return Container(width: 100, height: 200, color: Colors.purple,);
-        }
-    );
+              );
+        //     );
+        //   }
+        //   return Container(width: 100, height: 200, color: Colors.purple,);
+        // }
+    // );
   }
 
   void _onPressed() async {
+    print("local str: ${I18n.localeStr}");
     I18n.of(context).locale = (I18n.localeStr == "zh_ch") ? const Locale("en", "US") : const Locale("zh", "CH");
+    print("local str: ${I18n.localeStr}");
   }
 
   void _increment() => setState(() => counter++);

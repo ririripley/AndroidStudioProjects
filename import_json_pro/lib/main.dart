@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_widget.dart';
 
-import 'main.i18n.dart';
+// import 'main.i18n.dart';
 import 'my_screen.dart';
+import 'my_screen.i18n.dart';
 
 
 
@@ -46,9 +47,9 @@ class MyApp extends StatelessWidget {
       const Locale('en', "US"),
       const Locale('pt', "BR"),
     ],
-    home: I18n(
-      child: MyHomePage(),
-    ),
+    home:
+       MyHomePage(),
+
     // Usually you should not provide an initialLocale,
     // and just let it use the system locale.
     // initialLocale: Locale("pt", "BR"),
@@ -64,12 +65,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late Future<void> loadAsync;
+
+
+  @override
+  void initState() {
+    super.initState();
+    loadAsync = MyI18n.loadTranslations();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("i18n Demo".i18n)),
-      body: MyScreen(),
-    );
+      body: FutureBuilder(
+        future: loadAsync,
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return I18n(child: MyScreen());
+          }
+          return Container(width: 100, height: 200, color: Colors.purple,);
+        },),);
   }
 }

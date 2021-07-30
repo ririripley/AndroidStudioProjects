@@ -33,6 +33,23 @@ class MyI18n {
 
   static Future<void> loadTranslations() async {
     _t += await JSONImporter().fromAssetDirectory("assets/locales");
+    _t += {
+      "zh_ch": {"文档权限 %d 人":
+        "文档权限 %d 人".one("文档权限 一 人")
+              .many("文档权限 %d 人"),
+      },
+      "en_us": {
+        "文档权限 %d 人":
+            "Document Permission %d people".one("Document Permission one person")
+                .many("Document Permission %d people"),
+      },
+      // "文档权限 %d 人" : {
+      //     "zh_ch": "文档权限 %d 人".one("文档权限 一 人")
+      //                             .many("文档权限 %d 人"),
+      //     "en_us" : "Document Permission %d people".one("Document Permission one person")
+      //         .many("Document Permission %d person"),
+      // }
+    };
   }
 }
 
